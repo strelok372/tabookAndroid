@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Записульки</string>
+    <string name="find_records">Поиск...</string>
+    <string name="settings">Настройки</string>
+</resources>
