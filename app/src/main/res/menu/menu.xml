@@ -5,7 +5,7 @@
         android:id="@+id/mi_find_record"
         android:icon="@drawable/ic_search_black_24dp"
         android:title="@string/find_records"
-        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView"/>
     <item
         android:id="@+id/mi_settings"

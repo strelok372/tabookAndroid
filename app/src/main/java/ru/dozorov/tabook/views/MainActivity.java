@@ -1,27 +1,55 @@
-package com.example.myapplication;
+package ru.dozorov.tabook.views;
 
-import android.content.ClipData;
+import androidx.lifecycle.Observer;
+
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
+import java.util.List;
+
+import androidx.lifecycle.ViewModelProviders;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import ru.dozorov.tabook.RecordViewModel;
+import ru.dozorov.tabook.deprecated.DBhelper;
+import ru.dozorov.tabook.NumbersAdapter;
+import ru.dozorov.tabook.R;
+import ru.dozorov.tabook.deprecated.RecordsContract;
+import ru.dozorov.tabook.retrofit.RetrofitService;
+import ru.dozorov.tabook.Record;
+import ru.dozorov.tabook.room.RecordDatabase;
+
+public class MainActivity extends AppCompatActivity {
+    private RecordViewModel viewModel;
+    public static String UserId;
     SQLiteDatabase database;
+
     private RecyclerView rvRecords;
     private NumbersAdapter numbersAdapter;
+
+    boolean isSynchronized = false;
+
+    public static final String APP_PREFERENCES = "mysettings";
+    public static final String APP_PREFERENCES_SYNC = "s";
+    final private int AUTH_CODE = 5;
+    private SharedPreferences mSettings;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -50,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.mi_settings:
                 Intent intent = new Intent(this, AuthPage.class);
-                startActivity(intent);
+                startActivityForResult(intent, AUTH_CODE);
                 break;
             default:
                 super.onOptionsItemSelected(item);
@@ -77,6 +105,23 @@ public class MainActivity extends AppCompatActivity {
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getApplicationContext(), 1);
         rvRecords.addItemDecoration(dividerItemDecoration);
+
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account != null){
+            UserId = account.getId();
+        }
+
+        mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+
+        viewModel = ViewModelProviders.of(this).get(RecordViewModel.class);
+        viewModel.getAllRecords().observe(this, new Observer<List<Record>>() {
+            @Override
+            public void onChanged(@Nullable List<Record> records) {
+                //update RecyclerView
+            }
+        });
+
+//        updateUI(account);
 
 //        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback() {
 //            @Override
@@ -106,7 +151,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateUI(){
-
+        RecordDatabase r = RecordDatabase.getInstance(this);
+//        r.dao().update();
     }
 
     public void onResume(){
@@ -117,5 +163,29 @@ public class MainActivity extends AppCompatActivity {
     private Cursor getAllItems(){
         return database.query(
                 RecordsContract.RecordEntry.TABLE_NAME,null,null,null,null,null, RecordsContract.RecordEntry.KEY_TIMESTAMP + " DESC");
+    }
+
+    private void getAllRecords(){
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mSettings.edit().putBoolean(APP_PREFERENCES_SYNC, isSynchronized).apply();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case AUTH_CODE:
+                if (resultCode == RESULT_OK){
+                    getAllRecords();
+                }
+                break;
+        }
+
     }
 }

@@ -1,17 +1,22 @@
-package com.example.myapplication;
+package ru.dozorov.tabook.views;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import static com.example.myapplication.RecordsContract.RecordEntry.*;
+
+import ru.dozorov.tabook.deprecated.DBhelper;
+import ru.dozorov.tabook.R;
+
+import static ru.dozorov.tabook.deprecated.RecordsContract.RecordEntry.KEY_DESCRIPTION;
+import static ru.dozorov.tabook.deprecated.RecordsContract.RecordEntry.KEY_NAME;
+import static ru.dozorov.tabook.deprecated.RecordsContract.RecordEntry.KEY_TAGS;
+import static ru.dozorov.tabook.deprecated.RecordsContract.RecordEntry.TABLE_NAME;
 
 public class NewRecordAdd extends AppCompatActivity {
 

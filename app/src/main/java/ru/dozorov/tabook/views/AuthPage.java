@@ -1,20 +1,30 @@
-package com.example.myapplication;
+package ru.dozorov.tabook.views;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.*;
-//import com.google.firebase.auth.FirebaseAuth;
-//import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import ru.dozorov.tabook.R;
+
+import static ru.dozorov.tabook.views.MainActivity.UserId;
 
 public class AuthPage extends AppCompatActivity {
 
@@ -22,6 +32,9 @@ public class AuthPage extends AppCompatActivity {
     private EditText etLogin;
     private EditText etPassword;
     private FirebaseAuth mAuth;
+    private TextView debTV;
+    GoogleSignInClient mGoogleSignInClient;
+    GoogleSignInOptions gso;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,8 +42,16 @@ public class AuthPage extends AppCompatActivity {
         setContentView(R.layout.auth_page);
         etLogin = (EditText) findViewById(R.id.et_input_email);
         etPassword = (EditText) findViewById(R.id.et_input_password);
+        debTV = (TextView) findViewById(R.id.tv_debug);
         mAuth = FirebaseAuth.getInstance();
 
+        if (UserId != null){
+            debTV.setText(UserId);
+        }
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
     @Override
     public void onStart(){
@@ -51,6 +72,9 @@ public class AuthPage extends AppCompatActivity {
             case R.id.b_decline_login:
                 finish();
                 break;
+            case (R.id.b_login_google):
+                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                startActivityForResult(signInIntent, 1);
         }
 
     }
@@ -112,6 +136,32 @@ public class AuthPage extends AppCompatActivity {
             // authenticate with your backend server, if you have one. Use
             // FirebaseUser.getIdToken() instead.
             String uid = user.getUid();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+    }
+
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            UserId = account.getId();
+            debTV.setText(UserId);
+            setResult(RESULT_OK, new Intent().putExtra("ID", UserId));
+            finish();
+            // Signed in successfully, show authenticated UI.
+//            updateUI(account);
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+//            updateUI(null);
         }
     }
 }

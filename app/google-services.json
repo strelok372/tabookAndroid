@@ -5,12 +5,22 @@
     "project_id": "cloudtasks-884e9",
     "storage_bucket": "cloudtasks-884e9.appspot.com"
   },
+
+"web":{
+  "client_id":"217555446137-mm5isvhbq9s0vapdq4l2bv0sfkvfudlg.apps.googleusercontent.com",
+  "project_id":"tabookapp-1557789616265",
+  "auth_uri":"https://accounts.google.com/o/oauth2/auth",
+  "token_uri":"https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+  "client_secret":"tcfrWBRIcpLMIP0jbVJLN5J9"
+},
+
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:502458018587:android:13c3c6a65bcbec53",
         "android_client_info": {
-          "package_name": "com.example.myapplication"
+          "package_name": "ru.dozorov.tabook"
         }
       },
       "oauth_client": [
@@ -18,7 +28,7 @@
           "client_id": "502458018587-ihu58goun5fkthmdk688418lv6nsar1c.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.myapplication",
+            "package_name": "ru.dozorov.tabook",
             "certificate_hash": "7fbb7e2fe4fda856112e4f0a1dc578d558012018"
           }
         }

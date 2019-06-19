@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package ru.dozorov.tabook.deprecated;
 
 import android.provider.BaseColumns;
 
@@ -13,6 +13,7 @@ public final class RecordsContract {
         public static final String KEY_TAGS = "tags";
         public static final String KEY_DESCRIPTION = "description";
         public static final String KEY_TIMESTAMP = "timestamp";
+        public static final String KEY_USERID = "userId";
         public static final String ID = "id";
     }
 }

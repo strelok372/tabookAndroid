@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package ru.dozorov.tabook;
 
 import org.junit.Test;
 
